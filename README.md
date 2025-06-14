@@ -1,5 +1,7 @@
 # Kontrak Token GOAT dan MEAT
 
+Repositori ini kini khusus memuat implementasi **EVM** untuk pengujian alur ecommerce. Versi CosmWasm telah dipisahkan.
+
 Repositori ini berisi dua token ERC20:
 
 - **GOAT** (Guardian of Agricultural Trade) mendukung proses staking. Token GOAT dicetak saat `GoatNFT` dikunci melalui `GoatNFTWrapper`. Pemegang dapat melakukan staking guna memperoleh imbal hasil tahunan tinggi.
@@ -92,7 +94,7 @@ GoatNFT bukan sekadar NFT koleksi. Token ini berfungsi sebagai **identitas digit
 - **Living Ledger** – Berat terakhir selalu di-update agar valuasi mengikuti kondisi riil.
 - **Ownership Record** – Mengikuti standar ERC721 sehingga kepemilikan dapat dipindahtangankan.
 - **Slaughter Certificate** – NFT wajib dibakar ketika kambing disembelih; pembakaran ini memicu `GoatNFTBurnHook` untuk mencetak `GOATMEAT` sesuai berat terakhir.
-- **Hook Configurable** – Alamat burn hook dapat diubah pemilik lewat `set_burn_hook` (CosmWasm) atau `setBurnHook` (Solidity).
+- **Hook Configurable** – Alamat burn hook dapat diubah pemilik melalui `setBurnHook`.
 - **Fraud Prevention** – Proses burn menghapus NFT selamanya sehingga tidak ada klaim ganda.
 
 ### Lifecycle Tokenization
@@ -110,7 +112,7 @@ Semua peristiwa tersebut tercatat on-chain sehingga pasokan GOAT dan MEAT selalu
 SapiNFT memodernisasi pencatatan sapi dengan pendekatan serupa. Token ini menyimpan `nfcId`, ras, tahun lahir, dan berat yang dapat diperbarui oleh pemilik agar valuasi tetap akurat. NFT dapat dipindahtangankan bebas sesuai standar ERC721. Saat sapi disembelih, NFT dibakar sehingga `SapiNFTBurnHook` otomatis mencetak `BEEFMEAT`. Token BEEFMEAT kemudian bisa ditebus menjadi daging fisik.
 
 Fungsi `burn` pada SapiNFT juga menghapus data dan memanggil `super.burn` terlebih dulu sebelum menghubungi `burnHook` agar tidak rentan terhadap *reentrancy*.
-- Pemilik dapat mengubah alamat hook melalui `set_burn_hook` (CosmWasm) atau `setBurnHook` di versi Solidity.
+- Pemilik dapat mengubah alamat hook melalui `setBurnHook`.
 
 Alurnya ringkas sebagai berikut:
 
@@ -169,53 +171,14 @@ npx hardhat run scripts/deploy.js --network sepolia
 
 ## Build Artifacts
 
-Folder `artifacts/` dihasilkan oleh Hardhat dan skrip build CosmWasm namun tidak disimpan di Git. Isi folder ini secara lokal dengan menjalankan konfigurasi Hardhat pada `hardhat.config.js` atau skrip build berikut:
+Folder `artifacts/` dihasilkan oleh Hardhat dan tidak disimpan di Git. Jalankan perintah berikut untuk menghasilkan ABI dan bytecode:
 
 ```bash
 npx hardhat compile
-# or
-./wasm-contracts/build.sh
 ```
 
-1. **EVM** – kompilasi kontrak Solidity dan hasilkan file ABI:
-   ```bash
-   npx hardhat compile
-   ```
-   Salin berkas ABI JSON dari `artifacts/contracts/` ke `backend/abi/` jika Anda mengubah kontraknya.
-2. **CosmWasm** – bangun paket Rust:
-   Pasang target build jika dibutuhkan:
-   ```bash
-   rustup target add wasm32-unknown-unknown
-   ```
-   Kemudian jalankan:
-   ```bash
-   ./wasm-contracts/build.sh
-   ```
-   Skrip menghasilkan berkas `.wasm` ke `artifacts/` dan menuliskan berkas skema pada masing-masing paket.
+Salin berkas ABI JSON dari `artifacts/contracts/` ke `backend/abi/` jika Anda mengubah kontraknya.
 
-## Perbandingan Perilaku CosmWasm
-
-Folder `wasm-contracts/` menyimpan versi CosmWasm dari setiap kontrak.
-Kontrak Solidity yang **sudah** terporting meliputi paket `starter`, `meat`,
-`goatnft`, `sapinft`, `ratehandler`, `goatnftwrapper`, `sapinftwrapper`,
-`goatnftburnhook`, `sapinftburnhook`, `barterengine`, dan `redeemengine`.
-Seluruh pesan
-CosmWasm tetap mengikuti fungsi di Solidity namun ada beberapa perbedaan tak
-terelakkan:
-
-- **MEAT**: Baik versi Solidity maupun CosmWasm hanya mencetak token melalui `mintSubtype()` yang dipanggil kontrak lain. Fitur auto-mint dengan token native telah dihapus.
-- **GOAT**: Kontrak `starter` mereplikasi logika staking, klaim, kompaun dan
-  pembakaran NFT. Event Solidity diterjemahkan menjadi atribut di response
-  CosmWasm, sedangkan cara perhitungan reward sama persis.
-- **GoatNFT**: Struktur data serta fungsi `mint` dan `burn` identik. Perbedaan
-  hanya terletak pada penamaan pesan. Kontrak ini tetap mendukung `update_weight`
-  dan memeriksa kesegaran data berat seperti implementasi Solidity.
-- Mulai versi `v1.1`, implementasi CosmWasm sepenuhnya mendukung alur
-  subtype-aware dan lineage-aware sehingga mencerminkan perilaku kontrak EVM.
-- Versi terbaru CosmWasm juga menegakkan batasan subtype dan perhitungan LOD yang sama dengan kontrak Solidity sehingga swap dan redeem mengikuti aturan identik.
-
-Secara umum kedua implementasi mempertahankan rasio reward yang sama
-agar perilaku ekonomi konsisten di EVM maupun Cosmos.
 
 ## Parameter Penting
 
@@ -402,21 +365,6 @@ Cakupan unit test meliputi:
 - Deployment GOAT dan MEAT beserta kepemilikan, hak minter awal, dan pencetakan perdana 1000 GOATMEAT via `mintSubtype`.
 - Proses staking, klaim, dan unstake.
 - Pengujian interval klaim (`claim.test.js`).
-Untuk kontrak CosmWasm, jalankan skrip build berikut terlebih dahulu:
-
-```bash
-rustup target add wasm32-unknown-unknown
-./wasm-contracts/build.sh
-```
-
-Skrip ini akan membangun `starter`, `meat`, dan `goatnft`, menyalin semua file `.wasm` ke folder `artifacts` dan menulis schema di masing-masing paket.
-Jika perintah `cargo schema` belum tersedia, jalankan `cargo install cargo-run-script` terlebih dahulu.
-
-Unit test Rust di setiap paket dapat dijalankan dengan:
-
-```bash
-cargo test
-```
 
 Assertion penting mengecek perubahan saldo, event tidak ter-revert, dan update
 waktu klaim. Belum tersedia tes batas untuk jumlah ekstrem atau konsumsi gas.
@@ -458,7 +406,6 @@ Dokumen pendukung lain tersedia untuk memahami keseluruhan proyek:
 - [GOAT & MEAT Lifecycle](docs/goat-meat-lifecycle.md)
 - [Contract Map](contract-map.md)
 - [Integration Bridge](integration-bridge.md)
-- [CosmWasm Deployment](docs/wasm-deploy.md)
 - [Frontend Pages](docs/frontend-pages.md)
 - [LOD Governance](docs/lod-governance.md)
 - [Governance Pipeline](docs/governance-lod-engine.md)
