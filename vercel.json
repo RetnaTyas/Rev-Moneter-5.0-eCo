@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/", "destination": "/shop" },
     { "source": "/shop", "destination": "/shop" },
     { "source": "/redeem", "destination": "/redeem" }
   ]
