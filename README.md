@@ -121,10 +121,9 @@ Sapi lahir → mint SapiNFT → update berat → transfer bila dijual → burn s
 ```
 
 ## Deployment
-
-1. Install all dependencies from this repository:
+1. Install frontend dependencies:
    ```bash
-   npm install
+   cd frontend && npm install
    ```
 2. Compile the contracts using the `hardhat.config.js` in this repository:
    ```bash
@@ -234,10 +233,9 @@ MEAT juga memunculkan event utama berikut:
 
 Semua pengujian Hardhat berada di direktori `test/`. Pastikan Anda menggunakan **Node.js v18 atau lebih baru** agar kompatibel dengan Hardhat.
 
-1. **Install dependencies** – jalankan ini sebelum perintah `npx hardhat` apa pun:
-
+1. **Install frontend dependencies** – hanya jika ingin menjalankan UI:
    ```bash
-   npm install
+   cd frontend && npm install
    ```
 
 2. **Compile** kontrak jika folder `artifacts/` masih kosong:
@@ -494,9 +492,8 @@ Folder `frontend/src/pages` menyediakan antarmuka simulasi sederhana untuk membe
 
 ### Menjalankan
 
-1. Install dependensi dan compile kontrak:
+1. Compile contracts using Hardhat:
    ```bash
-   npm install
    npx hardhat compile
    ```
 2. Jalankan Next.js dev server:
