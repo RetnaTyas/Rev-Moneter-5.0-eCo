@@ -114,6 +114,13 @@ describe("GoatNFT burn", function () {
     await expect(nft.burn(tokenId)).to.be.revertedWith("Not owner");
   });
 
+  it("reverts burn for nonexistent tokenId", async function () {
+    await expect(nft.connect(user).burn(999)).to.be.revertedWithCustomError(
+      nft,
+      "ERC721NonexistentToken"
+    );
+  });
+
   it("getGoatData cleared after burn", async function () {
     const tx = await nft.mint(user.address, 600, "clr", "Boer", 2022);
     const tokenId = (await tx.wait()).logs[0].args[2];
