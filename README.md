@@ -487,3 +487,23 @@ contract RedeemEngine is Ownable {
 
 Bukan sekadar dokumen, README ini menjadi "suara sistem" yang terus diperbarui
 dan dipertanggungjawabkan.
+
+## Test Mode Simulation
+
+Folder `frontend/src/pages` menyediakan antarmuka simulasi sederhana untuk membeli produk dan menebus hasil burn tanpa blockchain. API di bawah `pages/api` memvalidasi parameter berdasarkan ABI yang disimpan di folder `artifacts/` dan menghasilkan hash transaksi tiruan.
+
+### Menjalankan
+
+1. Install dependensi dan compile kontrak:
+   ```bash
+   npm install
+   npx hardhat compile
+   ```
+2. Jalankan Next.js dev server:
+   ```bash
+   cd frontend && npm install
+   npm run dev
+   ```
+
+Halaman `http://localhost:3000/shop` memungkinkan simulasi pembelian GOATMEAT atau BEEFMEAT. Setelah melakukan burn melalui API, halaman `http://localhost:3000/redeem` dapat digunakan untuk menebus menggunakan hash burn yang diberikan.
+

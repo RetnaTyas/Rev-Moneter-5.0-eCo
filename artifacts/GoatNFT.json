@@ -1,0 +1,24 @@
+{
+  "abi": [
+    {
+      "name": "mint",
+      "type": "function",
+      "inputs": [
+        {"name": "to", "type": "address"},
+        {"name": "weight", "type": "uint256"},
+        {"name": "nfcId", "type": "string"},
+        {"name": "breed", "type": "string"},
+        {"name": "birthYear", "type": "uint256"}
+      ],
+      "outputs": [{"name": "", "type": "uint256"}],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "name": "burn",
+      "type": "function",
+      "inputs": [{"name": "tokenId", "type": "uint256"}],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    }
+  ]
+}
