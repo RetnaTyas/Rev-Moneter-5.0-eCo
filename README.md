@@ -1,6 +1,6 @@
 # Kontrak Token GOAT dan MEAT
 
-Repositori ini kini khusus memuat implementasi **EVM** untuk pengujian alur ecommerce. Versi CosmWasm telah dipisahkan.
+Repositori ini menyimpan versi **EVM-only** dari Moneter 5.0 untuk pengujian alur ecommerce.
 
 Repositori ini berisi dua token ERC20:
 
