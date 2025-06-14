@@ -1,0 +1,19 @@
+{
+  "name": "goat-hardhat",
+  "version": "1.0.0",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.24.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.3.0",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.14.4",
+    "express": "^5.1.0",
+    "node-cache": "^5.1.2"
+  },
+  "scripts": {
+    "start:server": "node backend/server.js",
+    "test": "hardhat test"
+  }
+}

@@ -1,0 +1,63 @@
+name: CI Test Hybrid Hardhat + Wasm
+on:
+  push:
+    branches: [ "Revolusi-Moneter-5.0" ]
+  pull_request:
+    branches: [ "Revolusi-Moneter-5.0" ]
+
+jobs:
+  hardhat-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm ci
+
+      - name: Run Hardhat tests
+        run: npx hardhat test
+
+  wasm-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+          override: true
+
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Run CosmWasm tests
+        run: |
+          for dir in wasm-contracts/*; do
+            if [ -f "$dir/Cargo.toml" ]; then
+              echo "Testing $dir..."
+              (cd "$dir" && cargo build && cargo test)
+            fi
+          done
