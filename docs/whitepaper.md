@@ -43,7 +43,6 @@ Berdasarkan [goat-meat-lifecycle.md](goat-meat-lifecycle.md), setiap `GoatNFT` d
 ## Governance dan LOD Engine
 White paper ini mengikuti panduan [governance-lod-engine.md](governance-lod-engine.md). LOD Engine menetapkan paritas komoditas melalui fungsi `setCommodityRepresentation`. Setiap pembaruan diwajibkan melewati pipeline governansi dan diuji dengan Hardhat.
 
-Implementasi CosmWasm dari kontrak-kontrak ini kini menegakkan batasan subtype dan perhitungan LOD yang sama persis seperti versi Solidity sehingga barter maupun redeem mengikuti aturan identik.
 
 ## Visi
 Repositori ini bertujuan mewujudkan *Monetary 5.0* – sistem transparan berbasis siklus hidup, anti inflasi, dan terbuka untuk adopsi komunitas. Nilai diikat pada aktivitas nyata dengan meniadakan mint/burn sewenang-wenang.
